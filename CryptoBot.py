@@ -44,11 +44,11 @@ class CryptoBot:
                 c_name = "{}: ${}".format(symbol.upper(), human_format(float(price)))
                 if symbol in self.pricesat0:
                     r = round(price / self.pricesat0[symbol] * 100, 2)
-                    if r > 1:
+                    if r > 100:
                         c_name += "🟢{}%".format(round(r - 100, 2))
-                    if r == 1:
+                    if r == 100:
                         c_name += "⚫0%"
-                    if r < 1:
+                    if r < 100:
                         c_name += "🔴{}%".format(round(100 - r, 2))
 
                 if c_name != channels[symbol].name:
