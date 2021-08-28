@@ -53,10 +53,7 @@ class CryptoBot:
 
                 if c_name != channels[symbol].name:
                     c = channels[symbol]
-                    try:
-                        await c.edit(name=c_name)
-                    except:
-                        pass
+                    await c.edit(name=c_name)
             await asyncio.sleep(300)
 
     async def add(self, ctx):
