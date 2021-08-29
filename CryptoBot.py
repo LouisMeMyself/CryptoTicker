@@ -27,6 +27,7 @@ class CryptoBot:
             tomorrowat0 = todayat0 + datetime.timedelta(days=1)
 
             await asyncio.sleep((tomorrowat0 - now).total_seconds())
+<<<<<<< HEAD
             temp = None
             while temp is None:
                 try:
@@ -37,6 +38,12 @@ class CryptoBot:
                         json.dump(self.pricesat0, f)
                 except: pass
                 await asyncio.sleep(60)
+=======
+            await self.s2a.reloadAssets()
+            with open("utils/priceAt0AM.json", "w") as f:
+                self.pricesat0 = await JoeSubGraph.getPrices(self.s2a.symbol2address.keys())
+                json.dump(self.pricesat0, f)
+>>>>>>> master
 
     async def ticker(self, s_id):
         while 1:
