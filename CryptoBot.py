@@ -27,34 +27,48 @@ class CryptoBot:
             tomorrowat0 = todayat0 + datetime.timedelta(days=1)
 
             await asyncio.sleep((tomorrowat0 - now).total_seconds())
-            allSymbols = set()
-            for symbols in self.channels.catPerID.values():
-                for symbol in symbols["symbols"].keys():
-                    allSymbols.add(symbol)
-            with open("utils/priceAt0AM.json", "w") as f:
-                self.pricesat0 = await JoeSubGraph.getPrices(allSymbols)
-                json.dump(self.pricesat0, f)
+            temp = None
+            while temp is None:
+                try:
+                    await self.s2a.reloadAssets()
+                    with open("utils/priceAt0AM.json", "w") as f:
+                        temp = await JoeSubGraph.getPrices(self.s2a.symbol2address.keys())
+                        self.pricesat0 = temp
+                        json.dump(self.pricesat0, f)
+                except: pass
+                await asyncio.sleep(60)
 
     async def ticker(self, s_id):
-        print("CryptoTicker is up")
         while 1:
-            channels = self.channels.catPerID[s_id]["symbols"]
-            prices = await JoeSubGraph.getPrices(channels.keys())
-            for symbol, price in prices.items():
-                c_name = "{}: ${}".format(symbol.upper(), human_format(float(price)))
-                if symbol in self.pricesat0:
-                    r = round(price / self.pricesat0[symbol] * 100, 2)
-                    if r > 100:
-                        c_name += " 🟢{}%".format(round(r - 100, 2))
-                    if r == 100:
-                        c_name += " ⚫0%"
-                    if r < 100:
-                        c_name += " 🔴{}%".format(round(r - 100, 2))
+            print("CryptoTicker is up")
+            try:
+                while 1:
+                    channels = self.channels.catPerID[s_id]["symbols"]
+                    prices = await JoeSubGraph.getPrices(channels.keys())
+                    for symbol, price in prices.items():
+                        c_name = "{}: ${}".format(symbol.upper(), human_format(float(price)))
+                        if symbol in self.pricesat0:
+                            r = round(price / self.pricesat0[symbol] * 100, 2)
+                            if r > 100:
+                                c_name += " 🟢{}%".format(round(r - 100, 2))
+                            if r == 100:
+                                c_name += " ⚫0%"
+                            if r < 100:
+                                c_name += " 🔴{}%".format(round(r - 100, 2))
 
-                if c_name != channels[symbol].name:
-                    c = channels[symbol]
-                    await c.edit(name=c_name)
-            await asyncio.sleep(300)
+                        if c_name != channels[symbol].name:
+                            c = channels[symbol]
+                            await c.edit(name=c_name)
+                    await asyncio.sleep(300)
+            except ConnectionError:
+                print("Connection error, retrying in 60 seconds...")
+            except AssertionError:
+                print("Assertion Error, retrying in 60 seconds...")
+            except KeyboardInterrupt:
+                print(KeyboardInterrupt)
+                break
+            await asyncio.sleep(60)
+        
 
     async def add(self, ctx):
         symbols = ctx.message.content.replace(Constants.ADD_CMD + " ", "").split(" ")
