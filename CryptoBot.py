@@ -27,12 +27,9 @@ class CryptoBot:
             tomorrowat0 = todayat0 + datetime.timedelta(days=1)
 
             await asyncio.sleep((tomorrowat0 - now).total_seconds())
-            allSymbols = set()
-            for symbols in self.channels.catPerID.values():
-                for symbol in symbols["symbols"].keys():
-                    allSymbols.add(symbol)
+            await self.s2a.reloadAssets()
             with open("utils/priceAt0AM.json", "w") as f:
-                self.pricesat0 = await JoeSubGraph.getPrices(allSymbols)
+                self.pricesat0 = await JoeSubGraph.getPrices(self.s2a.symbol2address.keys())
                 json.dump(self.pricesat0, f)
 
     async def ticker(self, s_id):
