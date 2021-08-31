@@ -32,7 +32,7 @@ class CryptoBot:
                 try:
                     await self.s2a.reloadAssets()
                     with open("utils/priceAt0AM.json", "w") as f:
-                        temp = await JoeSubGraph.getPrices(list(self.s2a.symbol2address.keys()) + list("avax"))
+                        temp = await JoeSubGraph.getPrices(list(self.s2a.symbol2address.keys()) + list(["avax"]))
                         self.pricesat0 = temp
                         json.dump(self.pricesat0, f)
                 except: pass
