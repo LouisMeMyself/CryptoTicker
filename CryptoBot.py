@@ -18,7 +18,6 @@ class CryptoBot:
         if self.cryptoBot is not None:
             self.channels = Constants.CatPerID(self.cryptoBot)
             self.s2a = JoeSubGraph.s2a
-        print(self.channels.catPerID)
 
     async def getPriceAt0(self):
         while 1:
