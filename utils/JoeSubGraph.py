@@ -1,4 +1,3 @@
-import asyncio
 import json
 
 import requests
@@ -6,7 +5,7 @@ import requests
 from utils import Constants
 
 
-async def genericExchangeQuery(query):
+def genericExchangeQuery(query):
     r = requests.post(Constants.JOE_EXCHANGE_SG_URL, json={'query': query})
     assert (r.status_code == 200)
     return json.loads(r.text)
@@ -70,6 +69,6 @@ class Symbol2Address:
 s2a = Symbol2Address()
 
 if __name__ == '__main__':
-    asyncio.run(s2a.reloadAssets())
+    s2a.reloadAssets()
     print(s2a.symbol2address)
     print(getPriceOf("SMRT"))
