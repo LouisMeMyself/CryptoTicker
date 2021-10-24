@@ -43,7 +43,7 @@ class Symbol2Address:
                     tempdic[d["symbol"].lower().replace(" ", "")] = d["id"]
             skip += 1000
 
-        temp = {}
+        temp = {"avax": "avax"}
         for key, value in tempdic.items():
             if key[0] == "w" and key[-2:] == ".e":
                 temp[key[1:-2]] = value

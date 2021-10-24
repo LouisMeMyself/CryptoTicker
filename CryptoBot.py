@@ -5,7 +5,7 @@ import json
 from discord.ext import commands
 
 from utils import Constants, JoeSubGraph
-from utils.beautify_string import human_format
+from utils.beautify_string import humanFormat
 
 
 class CryptoBot:
@@ -45,7 +45,7 @@ class CryptoBot:
                     channels = self.channels.catPerID[s_id]["symbols"]
                     prices = JoeSubGraph.getPrices(channels.keys())
                     for symbol, price in prices.items():
-                        c_name = "{}: ${}".format(symbol.upper(), human_format(float(price)))
+                        c_name = "{}: ${}".format(symbol.upper(), humanFormat(float(price), 2))
                         if symbol in self.pricesat0:
                             r = round(price / self.pricesat0[symbol] * 100, 2)
                             if r > 100:
@@ -58,7 +58,7 @@ class CryptoBot:
                         if c_name != channels[symbol].name:
                             c = channels[symbol]
                             await c.edit(name=c_name)
-                    await asyncio.sleep(300)
+                    await asyncio.sleep(350)
             except ConnectionError:
                 print("Connection error, retrying in 60 seconds...")
             except AssertionError:
