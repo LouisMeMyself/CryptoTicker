@@ -1,5 +1,6 @@
 import asyncio
 import json
+
 import requests
 
 from utils import Constants
@@ -11,15 +12,10 @@ async def genericExchangeQuery(query):
     return json.loads(r.text)
 
 
-async def getAvaxPrice():
-    query = await genericExchangeQuery("{bundles {avaxPrice}}")
-    return float(query["data"]["bundles"][0]["avaxPrice"])
-
-
-async def getPrices(symbols):
+def getPrices(symbols):
     prices = {}
     for symbol in symbols:
-        p = await getPriceOf(symbol)
+        p = getPriceOf(symbol)
         prices[symbol] = p
     return prices
 
@@ -38,10 +34,10 @@ class Symbol2Address:
     def __init__(self):
         self.symbol2address = {}
 
-    async def reloadAssets(self):
+    def reloadAssets(self):
         skip, queryExchange, tempdic = 0, {}, {}
         while skip == 0 or len(queryExchange["data"]["tokens"]) == 1000:
-            queryExchange = await genericExchangeQuery(
+            queryExchange = genericExchangeQuery(
                 "{tokens(first: 1000, skip: " + str(skip) + "){id, symbol, liquidity, derivedAVAX}}")
             for d in queryExchange["data"]["tokens"]:
                 if float(d["liquidity"]) * float(d["derivedAVAX"]) >= 100:

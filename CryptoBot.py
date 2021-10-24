@@ -43,7 +43,7 @@ class CryptoBot:
             try:
                 while 1:
                     channels = self.channels.catPerID[s_id]["symbols"]
-                    prices = await JoeSubGraph.getPrices(channels.keys())
+                    prices = JoeSubGraph.getPrices(channels.keys())
                     for symbol, price in prices.items():
                         c_name = "{}: ${}".format(symbol.upper(), human_format(float(price)))
                         if symbol in self.pricesat0:
@@ -65,7 +65,7 @@ class CryptoBot:
                 print("Assertion Error, retrying in 60 seconds...")
             except KeyboardInterrupt:
                 print(KeyboardInterrupt)
-                break
+                return
             await asyncio.sleep(60)
         
 
@@ -74,7 +74,7 @@ class CryptoBot:
         for symbol in symbols:
             symbol = symbol.lower()
             if not self.s2a.hasKey(symbol):
-                await self.s2a.reloadAssets()
+                self.s2a.reloadAssets()
                 if not self.s2a.hasKey(symbol):
                     continue
 
@@ -101,7 +101,7 @@ class CryptoBot:
 
     async def on_ready(self):
         """starts cryptobot"""
-        await self.s2a.reloadAssets()
+        self.s2a.reloadAssets()
 
         with open("utils/priceAt0AM.json", "r") as f:
             self.pricesat0 = json.load(f)
