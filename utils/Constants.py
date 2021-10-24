@@ -16,6 +16,7 @@ ADDRESS = {}
 # joe ticker
 JOE_TICKER = {}
 
+E18 = 10 ** 18
 
 class CatPerID:
     def __init__(self, bot):

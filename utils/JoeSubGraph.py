@@ -1,9 +1,8 @@
 import asyncio
-import json, requests
+import json
+import requests
 
-from web3 import Web3
 from utils import Constants
-from utils.beautify_string import readable, human_format
 
 
 async def genericExchangeQuery(query):
@@ -25,20 +24,17 @@ async def getPrices(symbols):
     return prices
 
 
-async def getPriceOf(symbol):
+def getPriceOf(symbol):
     symbol = symbol.lower().replace(" ", "")
-    if symbol == "avax":
-        return await getAvaxPrice()
-    address = s2a.getAdress(symbol)
+    address = s2a.getAddress(symbol)
     if address is None:
         return "Unknown Token Symbol"
-    query = await genericExchangeQuery('{token(id: "' + address + '") {derivedAVAX}}')
-    avaxPrice = await getAvaxPrice()
-    derivedAvax = float(query["data"]["token"]["derivedAVAX"])
-    return avaxPrice * derivedAvax
+    r = requests.get("https://api.traderjoexyz.com/priceusd/{}".format(address))
+    assert (r.status_code == 200)
+    return json.loads(r.text) / Constants.E18
 
 
-class Symbol2Address():
+class Symbol2Address:
     def __init__(self):
         self.symbol2address = {}
 
@@ -64,7 +60,7 @@ class Symbol2Address():
                 temp[key] = value
         self.symbol2address = temp
 
-    def getAdress(self, symbol):
+    def getAddress(self, symbol):
         if symbol in self.symbol2address:
             return self.symbol2address[symbol]
         return None
@@ -80,3 +76,4 @@ s2a = Symbol2Address()
 if __name__ == '__main__':
     asyncio.run(s2a.reloadAssets())
     print(s2a.symbol2address)
+    print(getPriceOf("SMRT"))
